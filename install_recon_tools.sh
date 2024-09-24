@@ -1,52 +1,45 @@
 #!/bin/bash
 
-# Update package list
+# Func to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Update  apt
+echo "Updating package list..."
 sudo apt update
 
-# Install Go
-echo "Installing Go..."
-sudo apt install golang -y
+# install Requ tools
+required_tools=("subfinder" "httpx" "dirsearch" "nuclei" "jsfinder" "python3" "pip")
 
-# Install Python dependencies
-echo "Installing Python dependencies..."
-pip3 install -r requirements.txt
+for tool in "${required_tools[@]}"; do
+    if ! command_exists "$tool"; then
+        echo "Installing $tool..."
+        if [ "$tool" == "subfinder" ]; then
+            go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+        elif [ "$tool" == "httpx" ]; then
+            go install github.com/projectdiscovery/httpx/cmd/httpx@latest
+        elif [ "$tool" == "dirsearch" ]; then
+            git clone https://github.com/maurosoria/dirsearch.git
+            cd dirsearch || exit
+            chmod +x dirsearch.py
+            cd .. || exit
+        elif [ "$tool" == "nuclei" ]; then
+            go install github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
+        elif [ "$tool" == "jsfinder" ]; then
+            git clone https://github.com/niklasb/jsfinder.git
+            cd jsfinder || exit
+            pip install -r requirements.txt
+            cd .. || exit
+        elif [ "$tool" == "pip" ]; then
+            sudo apt install python3-pip
+        else
+            sudo apt install "$tool"
+        fi
+    else
+        echo "$tool is already installed."
+    fi
+done
 
-# Create Go workspace directory if not present
-mkdir -p $HOME/go/bin
-
-# Add Go to the PATH
-if ! grep -q "export PATH=\$PATH:\$HOME/go/bin" ~/.bashrc; then
-    echo "export PATH=\$PATH:\$HOME/go/bin" >> ~/.bashrc
-    source ~/.bashrc
-fi
-
-# Install Subfinder
-echo "Installing Subfinder..."
-go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-
-# Install Amass
-echo "Installing Amass..."
-go install -v github.com/owasp-amass/amass/v3/...@master
-
-# Install Httpx
-echo "Installing Httpx..."
-go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-
-# Install shuffledns
-echo "Installing Shuffledns..."
-go install -v github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest
-
-# Install Nuclei
-echo "Installing Nuclei..."
-go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
-
-# Clone Dirsearch repository
-echo "Cloning Dirsearch..."
-git clone https://github.com/maurosoria/dirsearch.git
-
-# Clone LinkFinder repository
-echo "Cloning LinkFinder..."
-git clone https://github.com/GerbenJavado/LinkFinder.git
-pip3 install -r LinkFinder/requirements.txt
-
-echo "Installation completed. All tools should now be available in your PATH."
+echo "All required tools have been installed."
+echo "You can now run the reconnaissance tool using the command: python3 recon_tool.py <input_file> .csv or .txt "
