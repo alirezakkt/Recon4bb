@@ -1,5 +1,5 @@
 # Recon4bb
-its a repo for automate routin recon basics 
+This is a repo for automate routin recon basics 
 u can use .csv or .txt file im using regax for find domain in plain text this files :
 
 Subdomain Enumeration (using Subfinder, Amass)
@@ -10,11 +10,10 @@ Directory Brute-Forcing (using Dirsearch)
 All results are organized into project-specific folders, making it easier to manage recon results for multiple target domains.
 
 Tools Integrated:
+
 Subfinder
-Amass
-Shuffledns
 Httpx
-LinkFinder
+Jsfinder
 Nuclei
 Dirsearch
 
@@ -24,10 +23,9 @@ un the provided installation script install_recon_tools.sh to install all requir
 chmod +x install_recon_tools.sh
 ./install_recon_tools.sh
 Set API Key:
-Update the config.ini file with your SecurityTrails API key. This key is needed for subdomain enumeration using passive methods.
+ask You in CLi promp when running script
 
-[API_KEYS]
-securitytrails_key = your_securitytrails_api_key
+
 Running the Script:
 
 python recon_tool.py <path_to_domains_file>
@@ -36,6 +34,7 @@ You’ll be prompted with options to choose the recon method you want to run (Su
 i am trying manage results in a folder
 when Script run , in prompt ask you project name 
 And make a directory 
-
+im try to logging beter And if there is a problem with the code, it will be saved in the recon.log file
 Im try to optimize Thread and timeouts
+
 updating this repo ...
